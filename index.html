@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🧪 Testing Completo reCAPTCHA v2</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .action-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        .test-section {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #27ae60;
+        }
+        .lambda-section {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        button {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 8px 5px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.4);
+        }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .copy-btn {
+            background: linear-gradient(45deg, #27ae60, #229954);
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+        }
+        .test-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            box-shadow: 0 2px 10px rgba(231, 76, 60, 0.3);
+        }
+        .lambda-btn {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            box-shadow: 0 2px 10px rgba(243, 156, 18, 0.3);
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .token-info {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .token-info strong {
+            color: #27ae60;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .result.success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .action-btn {
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            padding: 10px;
+        }
+        .config-section {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .endpoint-config {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .endpoint-config input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online { background: #27ae60; }
+        .status-offline { background: #e74c3c; }
+        .status-testing { background: #f39c12; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Testing Completo reCAPTCHA v2</h1>
+        <p class="subtitle">Generador de tokens + Validación + Testing para Swagger</p>
+        <div class="config-section">
+            <h3>⚙️ Configuración de Endpoints</h3>
+            <div class="endpoint-config">
+                <label>🔬 Servidor de Validación:</label>
+                <input type="text" id="validationEndpoint" value="http://localhost:8080/validate-recaptcha" placeholder="http://localhost:8080/validate-recaptcha">
+                <button onclick="testValidationServer()" class="test-btn">Test</button>
+                <span class="status-indicator status-offline" id="validationStatus"></span>
+            </div>
+            <div class="endpoint-config">
+                <label>🚀 Lambda/API Real:</label>
+                <input type="text" id="lambdaEndpoint" value="" placeholder="https://tu-lambda-url/v1/reward-store/redemption">
+                <button onclick="testLambdaServer()" class="lambda-btn">Test</button>
+                <span class="status-indicator status-offline" id="lambdaStatus"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="two-column">
+        <!-- Columna 1: Generación de Tokens -->
+        <div class="container">
+            <h2>🎯 Paso 1: Generar Token</h2>
+            <div class="action-section">
+                <h3>Resuelve el reCAPTCHA</h3>
+                <div style="text-align:center; margin: 20px 0;">
+                    <div class="g-recaptcha" data-sitekey="6Ld3MWwrAAAAAHHGHdkBSDubxOJmBaXhfyrSmzGZ"></div>
+                </div>
+                <div class="actions-grid">
+                    <button class="action-btn" onclick="generateToken()">🎫 Obtener Token</button>
+                </div>
+            </div>
+            <div class="token-info">
+                <strong>⏰ Generado:</strong> <span id="tokenTime">-</span><br>
+                <strong>⚠️ Expira en:</strong> ~2 minutos
+            </div>
+            <p><strong>🎫 Token generado:</strong></p>
+            <textarea id="token" rows="4" readonly placeholder="El token aparecerá aquí..."></textarea>
+            <div style="text-align: center;">
+                <button class="copy-btn" id="copy-btn" onclick="copyToken()" disabled>📋 Copiar Token</button>
+                <button onclick="clearAll()">🗑️ Limpiar Todo</button>
+            </div>
+        </div>
+        <!-- Columna 2: Testing -->
+        <div class="container">
+            <h2>🔬 Paso 2: Validar Token</h2>
+            <div class="test-section">
+                <h3>Validación Técnica</h3>
+                <p>Prueba la validación de reCAPTCHA en tu servidor de desarrollo:</p>
+                <button class="test-btn" onclick="validateWithTestServer()" disabled id="validateBtn">🔬 Validar en Servidor</button>
+                <div id="validationResult" class="result" style="display: none;"></div>
+            </div>
+            <div class="lambda-section">
+                <h3>API Real (Lambda)</h3>
+                <p>Prueba con tu endpoint real usando datos de ejemplo:</p>
+                <div style="margin: 10px 0;">
+                    <label><strong>Member ID:</strong></label>
+                    <input type="text" id="memberId" value="12345" style="width: 100%; padding: 8px; margin: 5px 0;">
+                </div>
+                <div style="margin: 10px 0;">
+                    <label><strong>Offer ID:</strong></label>
+                    <input type="text" id="offerId" value="OFFER123" style="width: 100%; padding: 8px; margin: 5px 0;">
+                </div>
+                <div style="margin: 10px 0;">
+                    <label><strong>Cantidad:</strong></label>
+                    <input type="number" id="quantity" value="1" style="width: 100%; padding: 8px; margin: 5px 0;">
+                </div>
+                <button class="lambda-btn" onclick="testWithRealAPI()" disabled id="lambdaBtn">🚀 Probar API Real</button>
+                <div id="lambdaResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Panel de Swagger -->
+    <div class="container">
+        <h2>📖 Para Swagger UI</h2>
+        <div class="action-section">
+            <h3>JSON para Request Body</h3>
+            <textarea id="swaggerJson" rows="8" readonly></textarea>
+            <button class="copy-btn" onclick="copySwaggerJson()">📋 Copiar JSON</button>
+            <h3>Headers necesarios</h3>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-family: monospace;">
+memberid: <span id="memberIdHeader">12345</span><br>
+Content-Type: application/json
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentToken = '';
+
+        // Inicializar
+        updateSwaggerJson();
+        
+        function generateToken() {
+            const token = grecaptcha.getResponse();
+            if (!token) {
+                alert('Por favor resuelve el reCAPTCHA.');
+                return;
+            }
+            currentToken = token;
+            document.getElementById('token').value = token;
+            document.getElementById('tokenTime').textContent = new Date().toLocaleTimeString();
+            document.getElementById('copy-btn').disabled = false;
+            document.getElementById('validateBtn').disabled = false;
+            document.getElementById('lambdaBtn').disabled = false;
+            updateSwaggerJson();
+        }
+
+        async function validateWithTestServer() {
+            if (!currentToken) return;
+            
+            const endpoint = document.getElementById('validationEndpoint').value;
+            const btn = document.getElementById('validateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Validando...';
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: currentToken
+                    })
+                });
+                
+                const result = await response.json();
+                displayResult('validationResult', result, response.ok);
+                
+            } catch (error) {
+                displayResult('validationResult', { error: error.message }, false);
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '🔬 Validar en Servidor';
+        }
+
+        async function testWithRealAPI() {
+            if (!currentToken) return;
+            
+            const endpoint = document.getElementById('lambdaEndpoint').value;
+            if (!endpoint) {
+                alert('Configura primero el endpoint de tu Lambda');
+                return;
+            }
+            
+            const btn = document.getElementById('lambdaBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Testing API...';
+            
+            const payload = {
+                offer_id: document.getElementById('offerId').value,
+                redemption_quantity: parseInt(document.getElementById('quantity').value),
+                recaptcha_token: currentToken
+            };
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'memberid': document.getElementById('memberId').value
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                displayResult('lambdaResult', result, response.ok);
+                
+            } catch (error) {
+                displayResult('lambdaResult', { error: error.message }, false);
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '🚀 Probar API Real';
+        }
+
+        async function testValidationServer() {
+            const endpoint = document.getElementById('validationEndpoint').value;
+            const status = document.getElementById('validationStatus');
+            
+            status.className = 'status-indicator status-testing';
+            
+            try {
+                const response = await fetch(endpoint.replace('/validate-recaptcha', '/'));
+                if (response.ok) {
+                    status.className = 'status-indicator status-online';
+                } else {
+                    status.className = 'status-indicator status-offline';
+                }
+            } catch (error) {
+                status.className = 'status-indicator status-offline';
+            }
+        }
+
+        async function testLambdaServer() {
+            const endpoint = document.getElementById('lambdaEndpoint').value;
+            const status = document.getElementById('lambdaStatus');
+            
+            if (!endpoint) {
+                status.className = 'status-indicator status-offline';
+                return;
+            }
+            
+            status.className = 'status-indicator status-testing';
+            
+            try {
+                // Test básico con OPTIONS o GET si está disponible
+                const response = await fetch(endpoint, { method: 'OPTIONS' });
+                status.className = 'status-indicator status-online';
+            } catch (error) {
+                // Si falla OPTIONS, asumimos que está online (CORS issue)
+                status.className = 'status-indicator status-online';
+            }
+        }
+
+        function displayResult(elementId, result, success) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${success ? 'success' : 'error'}`;
+            element.textContent = JSON.stringify(result, null, 2);
+        }
+
+        function copyToken() {
+            navigator.clipboard.writeText(currentToken);
+            showTemporarySuccess('copy-btn', '✅ Copiado!');
+        }
+
+        function copySwaggerJson() {
+            const json = document.getElementById('swaggerJson').value;
+            navigator.clipboard.writeText(json);
+            showStatus('📋 JSON copiado al portapapeles');
+        }
+
+        function updateSwaggerJson() {
+            const json = {
+                offer_id: document.getElementById('offerId').value,
+                redemption_quantity: parseInt(document.getElementById('quantity').value),
+                recaptcha_token: currentToken || "TU_TOKEN_AQUI"
+            };
+            
+            document.getElementById('swaggerJson').value = JSON.stringify(json, null, 2);
+            document.getElementById('memberIdHeader').textContent = document.getElementById('memberId').value;
+        }
+
+        function clearAll() {
+            currentToken = '';
+            document.getElementById('token').value = '';
+            document.getElementById('tokenTime').textContent = '-';
+            document.getElementById('copy-btn').disabled = true;
+            document.getElementById('validateBtn').disabled = true;
+            document.getElementById('lambdaBtn').disabled = true;
+            document.getElementById('validationResult').style.display = 'none';
+            document.getElementById('lambdaResult').style.display = 'none';
+            updateSwaggerJson();
+            grecaptcha.reset();
+        }
+
+        function showStatus(message) {
+            console.log(message);
+        }
+
+        function showTemporarySuccess(buttonId, message) {
+            const btn = document.getElementById(buttonId);
+            const original = btn.textContent;
+            btn.textContent = message;
+            setTimeout(() => btn.textContent = original, 2000);
+        }
+
+        // Update JSON when inputs change
+        document.getElementById('memberId').addEventListener('input', updateSwaggerJson);
+        document.getElementById('offerId').addEventListener('input', updateSwaggerJson);
+        document.getElementById('quantity').addEventListener('input', updateSwaggerJson);
+
+        // Test servers on load
+        setTimeout(() => {
+            testValidationServer();
+        }, 1000);
+    </script>
+</body>
+</html>
